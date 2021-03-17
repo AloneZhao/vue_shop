@@ -48,8 +48,8 @@ export default {
   data() {
     return {
       loginData: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       loginRules: {
         username: [
@@ -70,9 +70,9 @@ export default {
       this.$refs['loginForm'].validate(validate => {
         if (!validate) return false
         login(this.loginData).then(res => {
+          window.sessionStorage.setItem('token', res.data.token)
           this.$message.success(res.meta.msg)
           this.$router.push({ path: '/index' })
-          console.log('res', res)
         }).catch(err => {
           console.log(err)
         })

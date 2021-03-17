@@ -3,13 +3,32 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+const originalPush = Router.prototype.push
+
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const routes = [
+  { path: '/', redirect: '/index' },
   {
     path: '/index',
     name: 'index',
-    component: () => import('@/views/index/index')
+    redirect: '/welcome',
+    component: () => import('@/views/index/index'),
+    children: [
+      {
+        path: '/welcome',
+        name: 'welcome',
+        component: () => import('@/views/index/welcome')
+      },
+      {
+        path: '/users',
+        name: 'users',
+        component: () => import('@/views/user/userIndex')
+      }
+    ]
   },
-  { path: '/', redirect: '/login' },
   {
     path: '/login',
     name: 'login',
@@ -23,10 +42,20 @@ const router = new Router({
 
 // 挂在全局路由守卫
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') return next()
+  console.log('路由')
   const token = window.sessionStorage.getItem('token')
-  if (!token) return next('/login')
-  return next()
+  if (to.path === '/login') {
+    if (token) {
+      next('/index')
+    }
+  } else {
+    if (token) {
+      next()
+    } else {
+      next('/login')
+    }
+  }
+  next()
 })
 
 export default router

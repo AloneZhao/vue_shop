@@ -12,6 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
+    config['headers'].Authorization = window.sessionStorage.getItem('token')
     return config
   },
   function (error) {
@@ -31,7 +32,6 @@ service.interceptors.response.use(
       Message.error(meta.msg)
       return Promise.reject(meta)
     } else {
-      window.sessionStorage.setItem('token', data.data.token)
       return data
     }
   },

@@ -62,6 +62,7 @@ module.exports = {
     port: 8080, // 访问端口
     https: false, // 编译失败时刷新页面
     hot: true, // 开启热加载
+    inline: true,
     hotOnly: false,
     proxy: {
       // 开发阶段的跨域
